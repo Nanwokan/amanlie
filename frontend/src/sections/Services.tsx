@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { publicAsset } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -129,7 +130,7 @@ export default function Services() {
           label="Livraison"
           title="Vos plats préférés, directement chez vous"
           description="Commandez en quelques clics sur Deliveroo ou Uber Eats. Une cuisine authentique, préparée avec soin et livrée rapidement à votre porte."
-          image="/images/delivery.jpg"
+          image={publicAsset('images/delivery.jpg')}
           reversed
           cta={
             <div className="flex flex-wrap gap-4">
@@ -165,7 +166,7 @@ export default function Services() {
           label="Sur-mesure"
           title="Votre vision, notre expertise"
           description="Mariages, anniversaires, séminaires d'entreprise — nous adaptons nos prestations à vos envies. Menus personnalisés, décoration, service attentif : nous nous occupons de tout pour que vous profitiez pleinement de votre moment."
-          image="/images/surmesure.jpg"
+          image={publicAsset('images/surmesure.jpg')}
           cta={<a href="#contact" className="btn-primary">Nous contacter</a>}
         />
       </div>

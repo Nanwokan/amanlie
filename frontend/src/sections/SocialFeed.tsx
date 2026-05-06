@@ -2,15 +2,16 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Instagram } from 'lucide-react';
+import { publicAsset } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const socialImages = [
-  '/images/social-1.jpg',
-  '/images/social-2.jpg',
-  '/images/social-3.jpg',
-  '/images/social-4.jpg',
-  '/images/social-5.jpg',
+  publicAsset('images/social-1.jpg'),
+  publicAsset('images/social-2.jpg'),
+  publicAsset('images/social-3.jpg'),
+  publicAsset('images/social-4.jpg'),
+  publicAsset('images/social-5.jpg'),
 ];
 
 export default function SocialFeed() {

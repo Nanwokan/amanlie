@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { publicAsset } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,7 +82,7 @@ export default function Story() {
           className="overflow-hidden rounded-[4px]"
         >
           <img
-            src="/images/story.jpg"
+            src={publicAsset('images/story.jpg')}
             alt="Chef AMANLIÉ"
             className="aspect-square w-full object-cover"
           />

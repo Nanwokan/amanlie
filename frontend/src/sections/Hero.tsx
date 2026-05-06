@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { publicAsset } from '@/lib/utils';
 
-const HERO_LOGO_SRC = 'images/logo.png';
+const HERO_LOGO_SRC = publicAsset('images/logo.png?v=20260506');
+const HERO_BG_SRC = publicAsset('images/hero-bg.jpg');
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -68,7 +70,7 @@ export default function Hero() {
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/images/hero-bg.jpg)' }}
+        style={{ backgroundImage: `url(${HERO_BG_SRC})` }}
       />
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-black/50" />
