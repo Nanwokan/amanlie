@@ -86,7 +86,7 @@ export default function Hero() {
 
         <div
           ref={brandRef}
-          className="mt-8 opacity-0"
+          className=" opacity-0"
           style={{ transform: 'translateY(20px)' }}
         >
           <h1 className="font-display text-[26px] font-normal tracking-[0.24em] text-warm-cream drop-shadow-lg md:text-[32px]">

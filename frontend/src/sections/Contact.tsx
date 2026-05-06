@@ -144,9 +144,8 @@ export default function Contact() {
             </span>
           </div>
 
-          <h2 className="contact-copy mt-8 max-w-[9.8ch] font-display text-[clamp(2.55rem,3.9vw,4.2rem)] font-normal leading-[0.95] tracking-[-0.028em] text-bordeaux">
-            <span className="block">Une envie ? Un</span>
-            <span className="block italic">événement ?</span>
+          <h2 className="contact-copy mt-8 max-w-[12ch] font-display text-[clamp(2rem,3.9vw,3rem)] font-normal leading-[0.95] tracking-[-0.028em] text-bordeaux">
+            Une envie ? Un événement ?
           </h2>
 
           <p className="contact-copy mt-9 max-w-[33rem] font-body text-[15px] leading-[1.72] text-charcoal/78 md:text-[16px]">

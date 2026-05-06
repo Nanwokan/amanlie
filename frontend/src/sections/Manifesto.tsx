@@ -104,7 +104,7 @@ export default function Manifesto() {
 
       <p
         ref={subtitleRef}
-        className="mt-8 max-w-[42rem] font-body text-[14px] leading-[1.72] text-charcoal/76 opacity-0 md:text-[15px]"
+        className="mt-8 max-w-[42rem] font-body text-[16px] leading-[1.72] text-[#d9b588] opacity-0 md:text-[15px]"
         style={{ transform: 'translateY(18px)' }}
       >
        Saveurs authentiques, livrées avec passion.

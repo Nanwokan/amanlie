@@ -100,7 +100,7 @@ export default function Story() {
             AMANLIÉ, une cuisine qui raconte un voyage
           </h2>
 
-          <p className="stagger-item mt-7 max-w-[470px] font-body text-[14px] leading-[1.7] text-warm-cream/82 md:text-[15px]">
+          <p className="stagger-item mt-7 max-w-[470px] font-body text-[14px] leading-[1.7] text-warm-cream md:text-[15px]">
             Fondée par Ouattara N&apos;dabani Lynda Valérie, AMANLIÉ naît d&apos;une
             passion: partager des saveurs sincères, entre héritage africain, découvertes
             gastronomiques et hospitalité contemporaine.
@@ -108,7 +108,7 @@ export default function Story() {
 
           <div className="stagger-item mt-10 flex items-start gap-5">
             <div className="mt-4 h-px w-20 shrink-0 bg-[#d9b588]" />
-            <p className="font-accent text-[1.55rem] italic leading-[1.35] text-warm-cream/72 md:text-[1.8rem]">
+            <p className="font-accent text-[1.55rem] italic leading-[1.35] text-warm-cream md:text-[1.8rem]">
               “La nourriture est notre langage universel.”
             </p>
           </div>
