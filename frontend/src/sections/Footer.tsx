@@ -22,7 +22,7 @@ export default function Footer() {
       <div className="mx-auto max-w-[1280px]">
         <div className="mb-12 text-center">
           <span className="font-display text-[24px] font-normal tracking-[0.18em] text-bordeaux md:text-[26px]">
-            AMANLIÉ
+            AMANLIÈ
           </span>
         </div>
 
@@ -109,7 +109,7 @@ export default function Footer() {
         <div className="mb-8 h-px w-full bg-[#e6d7c5]" />
 
         <p className="text-center font-body text-[11px] text-charcoal/58">
-          © 2025 AMANLIÉ. Tous droits réservés.
+          © 2025 AMANLIÈ. Tous droits réservés.
         </p>
       </div>
     </footer>

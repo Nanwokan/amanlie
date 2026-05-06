@@ -9,13 +9,13 @@ const testimonials = [
   {
     name: 'Aïcha M.',
     role: 'Mariage — 120 invités',
-    text: "AMANLIÉ a magnifiquement orchestré le buffet de notre mariage. Les saveurs africaines ont enchanté tous nos invités, et la présentation était digne d'un magazine.",
+    text: "AMANLIÈ a magnifiquement orchestré le buffet de notre mariage. Les saveurs africaines ont enchanté tous nos invités, et la présentation était digne d'un magazine.",
     rating: 5,
   },
   {
     name: 'Thomas B.',
     role: 'Événement corporate',
-    text: "Nous faisons appel à AMANLIÉ pour nos déjeuners d'entreprise. La livraison est toujours ponctuelle, la cuisine fraîche et originale, avec un vrai sens du détail.",
+    text: "Nous faisons appel à AMANLIÈ pour nos déjeuners d'entreprise. La livraison est toujours ponctuelle, la cuisine fraîche et originale, avec un vrai sens du détail.",
     rating: 5,
   },
   {

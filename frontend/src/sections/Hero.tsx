@@ -79,7 +79,7 @@ export default function Hero() {
         <img
           ref={logoRef}
           src={HERO_LOGO_SRC}
-          alt="AMANLIÉ"
+          alt="AMANLIÈ"
           className="h-auto w-[180px] opacity-0 drop-shadow-lg md:w-[240px]"
           style={{ transform: 'scale(0.9)' }}
         />
@@ -90,7 +90,7 @@ export default function Hero() {
           style={{ transform: 'translateY(20px)' }}
         >
           <h1 className="font-display text-[26px] font-normal tracking-[0.24em] text-warm-cream drop-shadow-lg md:text-[32px]">
-            AMANLIÉ
+            AMANLIÈ
           </h1>
         </div>
 

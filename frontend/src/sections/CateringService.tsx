@@ -103,7 +103,7 @@ export default function CateringService() {
           </h2>
 
           <p className="catering-copy mt-11 max-w-[36rem] font-body text-[14px] leading-[1.7] text-[#efd7cb] md:text-[15px]">
-            De la table familiale au cocktail d&apos;entreprise, AMANLIÉ orchestre une
+            De la table familiale au cocktail d&apos;entreprise, AMANLIÈ orchestre une
             expérience culinaire qui vous ressemble. Nous composons votre menu, gérons la
             logistique, et apportons l&apos;âme du voyage.
           </p>

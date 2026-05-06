@@ -46,7 +46,7 @@ export default function Navigation() {
             scrolled ? 'text-bordeaux' : 'text-warm-cream'
           }`}
         >
-          AMANLIÉ
+          AMANLIÈ
         </a>
 
         <div className="hidden items-center gap-8 md:flex">

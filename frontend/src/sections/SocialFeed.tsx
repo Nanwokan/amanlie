@@ -72,7 +72,7 @@ export default function SocialFeed() {
           >
             <img
               src={src}
-              alt={`Univers AMANLIÉ ${index + 1}`}
+              alt={`Univers AMANLIÈ ${index + 1}`}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-bordeaux/0 transition-all duration-300 group-hover:bg-bordeaux/16">

@@ -211,7 +211,7 @@ export default function Contact() {
 
               <p className="mt-5 max-w-[38rem] font-body text-[14px] leading-[1.65] text-charcoal/72">
                 En envoyant ce message, vous acceptez d&apos;être recontacté(e) par
-                AMANLIÉ.
+                AMANLIÈ.
               </p>
 
               {submitted ? (

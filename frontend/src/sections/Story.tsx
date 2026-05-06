@@ -83,7 +83,7 @@ export default function Story() {
         >
           <img
             src={publicAsset('images/story.jpg')}
-            alt="Chef AMANLIÉ"
+            alt="Chef AMANLIÈ"
             className="aspect-square w-full object-cover"
           />
         </div>
@@ -97,11 +97,11 @@ export default function Story() {
           </div>
 
           <h2 className="stagger-item max-w-[540px] font-display text-[clamp(2rem,3.2vw,3rem)] font-normal leading-[1.08] tracking-[-0.02em] text-warm-cream">
-            AMANLIÉ, une cuisine qui raconte un voyage
+            AMANLIÈ, une cuisine qui raconte un voyage
           </h2>
 
           <p className="stagger-item mt-7 max-w-[470px] font-body text-[14px] leading-[1.7] text-warm-cream md:text-[15px]">
-            Fondée par Ouattara N&apos;dabani Lynda Valérie, AMANLIÉ naît d&apos;une
+            Fondée par Ouattara N&apos;dabani Lynda Valérie, AMANLIÈ naît d&apos;une
             passion: partager des saveurs sincères, entre héritage africain, découvertes
             gastronomiques et hospitalité contemporaine.
           </p>
