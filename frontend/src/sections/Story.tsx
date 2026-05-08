@@ -1,23 +1,27 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { publicAsset } from '@/lib/utils';
+import storyImageSrc from '@/assets/images/story.jpg';
+import { prefersReducedMotion } from '@/lib/motion';
+import { SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Story() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
-      const img = imageContainerRef.current?.querySelector('img');
-      if (img) {
+    const context = gsap.context(() => {
+      const image = imageContainerRef.current?.querySelector('img');
+      if (image) {
         gsap.fromTo(
-          img,
+          image,
           { scale: 1.12, opacity: 0 },
           {
             scale: 1,
@@ -47,7 +51,7 @@ export default function Story() {
       }
 
       const textChildren = textRef.current?.querySelectorAll('.stagger-item');
-      if (textChildren && textChildren.length > 0) {
+      if (textChildren?.length) {
         gsap.fromTo(
           textChildren,
           { y: 44, opacity: 0 },
@@ -67,24 +71,25 @@ export default function Story() {
       }
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
     <section
       id="story"
-      ref={sectionRef}
-      className="bg-bordeaux px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32"
+      className="scroll-mt-28 bg-bordeaux px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32"
     >
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16">
-        <div
-          ref={imageContainerRef}
-          className="overflow-hidden rounded-[4px]"
-        >
+      <div
+        ref={sectionRef}
+        className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16"
+      >
+        <div ref={imageContainerRef} className="overflow-hidden rounded-[4px]">
           <img
-            src={publicAsset('images/story.jpg')}
-            alt="Chef AMANLIÈ"
+            src={storyImageSrc}
+            alt={`L'équipe ${SITE_NAME}`}
             className="aspect-square w-full object-cover"
+            decoding="async"
+            loading="lazy"
           />
         </div>
 
@@ -97,19 +102,19 @@ export default function Story() {
           </div>
 
           <h2 className="stagger-item max-w-[540px] font-display text-[clamp(2rem,3.2vw,3rem)] font-normal leading-[1.08] tracking-[-0.02em] text-warm-cream">
-            AMANLIÈ, une cuisine qui raconte un voyage
+            {SITE_NAME}, une cuisine qui raconte un voyage
           </h2>
 
           <p className="stagger-item mt-7 max-w-[470px] font-body text-[14px] leading-[1.7] text-warm-cream md:text-[15px]">
-            Fondée par Ouattara N&apos;dabani Lynda Valérie, AMANLIÈ naît d&apos;une
-            passion: partager des saveurs sincères, entre héritage africain, découvertes
-            gastronomiques et hospitalité contemporaine.
+            Fondée par Ouattara N&apos;dabani Lynda Valérie, {SITE_NAME} naît d&apos;une
+            passion : partager des saveurs sincères, entre héritage africain,
+            découvertes gastronomiques et hospitalité contemporaine.
           </p>
 
           <div className="stagger-item mt-10 flex items-start gap-5">
             <div className="mt-4 h-px w-20 shrink-0 bg-[#d9b588]" />
             <p className="font-accent text-[1.55rem] italic leading-[1.35] text-warm-cream md:text-[1.8rem]">
-              “La nourriture est notre langage universel.”
+              "La nourriture est notre langage universel."
             </p>
           </div>
         </div>

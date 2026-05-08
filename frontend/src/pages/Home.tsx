@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/lib/motion';
 import Navigation from '../sections/Navigation';
 import Hero from '../sections/Hero';
 import Manifesto from '../sections/Manifesto';
@@ -18,12 +19,21 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   useEffect(() => {
-    // Refresh ScrollTrigger after all components mount
-    const timeout = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 500);
+    if (prefersReducedMotion()) {
+      return undefined;
+    }
 
-    return () => clearTimeout(timeout);
+    const refresh = () => {
+      ScrollTrigger.refresh();
+    };
+
+    const frame = window.requestAnimationFrame(refresh);
+    window.addEventListener('load', refresh);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('load', refresh);
+    };
   }, []);
 
   return (

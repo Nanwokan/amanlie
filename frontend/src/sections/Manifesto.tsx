@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,24 +12,27 @@ export default function Manifesto() {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const lineText = lineRef.current?.textContent || '';
+
       if (lineRef.current) {
         lineRef.current.innerHTML = '';
-        lineText.split('').forEach((char) => {
+        lineText.split('').forEach((character) => {
           const span = document.createElement('span');
-          span.textContent = char === ' ' ? '\u00A0' : char;
+          span.textContent = character === ' ' ? '\u00A0' : character;
           span.style.display = 'inline-block';
           span.style.opacity = '0';
           span.style.transform = 'translateY(60px) rotateX(-30deg)';
           span.style.transformOrigin = 'center bottom';
-          lineRef.current!.appendChild(span);
+          lineRef.current?.appendChild(span);
         });
       }
 
-      const tl = gsap.timeline({
+      const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 62%',
@@ -36,26 +40,15 @@ export default function Manifesto() {
         },
       });
 
-      tl.to(lineRef.current!.querySelectorAll('span'), {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 1.2,
-        stagger: 0.028,
-        ease: 'expo.out',
-      })
-        .to(
-          lineRef.current!.querySelectorAll('span'),
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 1.2,
-            stagger: 0.028,
-            ease: 'expo.out',
-          },
-          '-=1'
-        )
+      timeline
+        .to(lineRef.current?.querySelectorAll('span') ?? [], {
+          opacity: 1,
+          y: 0,
+          rotateX: 0,
+          duration: 1.2,
+          stagger: 0.028,
+          ease: 'expo.out',
+        })
         .to(
           decoRef.current,
           {
@@ -78,7 +71,7 @@ export default function Manifesto() {
         );
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
@@ -107,7 +100,7 @@ export default function Manifesto() {
         className="mt-8 max-w-[42rem] font-body text-[16px] leading-[1.72] text-[#d9b588] opacity-0 md:text-[15px]"
         style={{ transform: 'translateY(18px)' }}
       >
-       Saveurs authentiques, livrées avec passion.
+        Saveurs authentiques, livrées avec passion.
       </p>
     </section>
   );

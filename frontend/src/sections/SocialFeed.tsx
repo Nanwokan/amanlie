@@ -1,17 +1,23 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Instagram } from 'lucide-react';
-import { publicAsset } from '@/lib/utils';
+import socialImage1 from '@/assets/images/social-1.jpg';
+import socialImage2 from '@/assets/images/social-2.jpg';
+import socialImage3 from '@/assets/images/social-3.jpg';
+import socialImage4 from '@/assets/images/social-4.jpg';
+import socialImage5 from '@/assets/images/social-5.jpg';
+import ComingSoonPill from '@/components/ComingSoonPill';
+import { prefersReducedMotion } from '@/lib/motion';
+import { SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const socialImages = [
-  publicAsset('images/social-1.jpg'),
-  publicAsset('images/social-2.jpg'),
-  publicAsset('images/social-3.jpg'),
-  publicAsset('images/social-4.jpg'),
-  publicAsset('images/social-5.jpg'),
+  socialImage1,
+  socialImage2,
+  socialImage3,
+  socialImage4,
+  socialImage5,
 ];
 
 export default function SocialFeed() {
@@ -19,10 +25,16 @@ export default function SocialFeed() {
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !gridRef.current) return;
+    if (!sectionRef.current || !gridRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
-      const items = gridRef.current!.querySelectorAll('.social-item');
+    const context = gsap.context(() => {
+      const items = gridRef.current?.querySelectorAll('.social-item');
+      if (!items?.length) {
+        return;
+      }
+
       gsap.fromTo(
         items,
         { scale: 1.08, opacity: 0 },
@@ -41,7 +53,7 @@ export default function SocialFeed() {
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
@@ -54,34 +66,27 @@ export default function SocialFeed() {
           </span>
         </div>
         <p className="font-display text-[20px] font-normal leading-[1.08] text-bordeaux md:text-[23px]">
-          @amanlie_paris
+          L&apos;univers {SITE_NAME}
         </p>
+        <div className="mt-5 flex justify-center">
+          <ComingSoonPill label="Instagram" />
+        </div>
       </div>
 
-      <div
-        ref={gridRef}
-        className="grid grid-cols-2 gap-0 md:grid-cols-5"
-      >
+      <div ref={gridRef} className="grid grid-cols-2 gap-0 md:grid-cols-5">
         {socialImages.map((src, index) => (
-          <a
-            key={index}
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-item group relative aspect-square overflow-hidden"
-          >
+          <figure key={src} className="social-item group relative aspect-square overflow-hidden">
             <img
               src={src}
-              alt={`Univers AMANLIÈ ${index + 1}`}
+              alt={`Univers ${SITE_NAME} ${index + 1}`}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+              decoding="async"
+              loading="lazy"
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-bordeaux/0 transition-all duration-300 group-hover:bg-bordeaux/16">
-              <Instagram
-                size={26}
-                className="text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              />
-            </div>
-          </a>
+            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-4 py-3 font-body text-[11px] uppercase tracking-[0.22em] text-white/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              Instagram bientôt
+            </figcaption>
+          </figure>
         ))}
       </div>
     </section>

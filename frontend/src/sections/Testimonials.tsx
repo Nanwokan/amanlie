@@ -2,20 +2,22 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Quote, Star } from 'lucide-react';
+import { prefersReducedMotion } from '@/lib/motion';
+import { SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
     name: 'Aïcha M.',
-    role: 'Mariage — 120 invités',
-    text: "AMANLIÈ a magnifiquement orchestré le buffet de notre mariage. Les saveurs africaines ont enchanté tous nos invités, et la présentation était digne d'un magazine.",
+    role: 'Mariage, 120 invités',
+    text: `${SITE_NAME} a magnifiquement orchestré le buffet de notre mariage. Les saveurs africaines ont enchanté tous nos invités, et la présentation était digne d'un magazine.`,
     rating: 5,
   },
   {
     name: 'Thomas B.',
     role: 'Événement corporate',
-    text: "Nous faisons appel à AMANLIÈ pour nos déjeuners d'entreprise. La livraison est toujours ponctuelle, la cuisine fraîche et originale, avec un vrai sens du détail.",
+    text: `Nous faisons appel à ${SITE_NAME} pour nos déjeuners d'entreprise. La livraison est toujours ponctuelle, la cuisine fraîche et originale, avec un vrai sens du détail.`,
     rating: 5,
   },
   {
@@ -31,10 +33,16 @@ export default function Testimonials() {
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !cardsRef.current) return;
+    if (!sectionRef.current || !cardsRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
-      const cards = cardsRef.current!.querySelectorAll('.testimonial-card');
+    const context = gsap.context(() => {
+      const cards = cardsRef.current?.querySelectorAll('.testimonial-card');
+      if (!cards?.length) {
+        return;
+      }
+
       gsap.fromTo(
         cards,
         { y: 44, opacity: 0 },
@@ -53,7 +61,7 @@ export default function Testimonials() {
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
@@ -76,10 +84,7 @@ export default function Testimonials() {
           </h2>
         </div>
 
-        <div
-          ref={cardsRef}
-          className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8"
-        >
+        <div ref={cardsRef} className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
           {testimonials.map((testimonial) => (
             <article
               key={testimonial.name}
@@ -98,7 +103,7 @@ export default function Testimonials() {
               </div>
 
               <p className="flex-grow font-body text-[14px] leading-[1.72] text-charcoal/76 md:text-[15px]">
-                “{testimonial.text}”
+                "{testimonial.text}"
               </p>
 
               <div className="mt-8 border-t border-[#e4d6c4] pt-6">

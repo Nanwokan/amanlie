@@ -2,13 +2,15 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Check, Sparkles } from 'lucide-react';
+import { prefersReducedMotion } from '@/lib/motion';
+import { SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const cateringBenefits = [
   'Devis gratuit sous 24h',
   'Menu personnalisé selon vos goûts',
-  'Service & matériel disponibles',
+  'Service et matériel disponibles',
   'Options végétariennes et sans gluten',
 ];
 
@@ -23,7 +25,7 @@ const cateringCards = [
   },
   {
     title: ['Événements privés'],
-    description: 'Anniversaires, baptêmes, dîners intimes — sur mesure.',
+    description: 'Anniversaires, baptêmes, dîners intimes, sur mesure.',
   },
   {
     title: ['Animation culinaire'],
@@ -35,9 +37,11 @@ export default function CateringService() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       gsap.fromTo(
         '.catering-copy',
         { y: 36, opacity: 0 },
@@ -73,12 +77,12 @@ export default function CateringService() {
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
     <section
-      id="services"
+      id="traiteur"
       className="relative overflow-hidden bg-[#7c1d1c] px-10 py-16 md:px-10 md:py-24 lg:px-20 lg:py-28"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,rgba(195,90,48,0.34),transparent_34%)]" />
@@ -103,9 +107,9 @@ export default function CateringService() {
           </h2>
 
           <p className="catering-copy mt-11 max-w-[36rem] font-body text-[14px] leading-[1.7] text-[#efd7cb] md:text-[15px]">
-            De la table familiale au cocktail d&apos;entreprise, AMANLIÈ orchestre une
-            expérience culinaire qui vous ressemble. Nous composons votre menu, gérons la
-            logistique, et apportons l&apos;âme du voyage.
+            De la table familiale au cocktail d&apos;entreprise, {SITE_NAME} orchestre
+            une expérience culinaire qui vous ressemble. Nous composons votre menu,
+            gérons la logistique, et apportons l&apos;âme du voyage.
           </p>
 
           <ul className="mt-12 grid gap-[1.05rem]">

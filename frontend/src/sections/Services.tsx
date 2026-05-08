@@ -1,30 +1,43 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { publicAsset } from '@/lib/utils';
+import deliveryImageSrc from '@/assets/images/delivery.jpg';
+import surMesureImageSrc from '@/assets/images/surmesure.jpg';
+import ComingSoonPill from '@/components/ComingSoonPill';
+import { prefersReducedMotion } from '@/lib/motion';
+import { WHATSAPP_URL } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface ServiceRowProps {
-  label: string;
-  title: string;
+  cta: React.ReactNode;
   description: string;
   image: string;
+  label: string;
   reversed?: boolean;
-  cta: React.ReactNode;
+  title: string;
 }
 
-function ServiceRow({ label, title, description, image, reversed, cta }: ServiceRowProps) {
+function ServiceRow({
+  cta,
+  description,
+  image,
+  label,
+  reversed,
+  title,
+}: ServiceRowProps) {
   const rowRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const imgContainerRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!rowRef.current) return;
+    if (!rowRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const textChildren = textRef.current?.querySelectorAll('.stagger-item');
-      if (textChildren && textChildren.length > 0) {
+      if (textChildren?.length) {
         gsap.fromTo(
           textChildren,
           { y: 60, opacity: 0 },
@@ -43,10 +56,10 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
         );
       }
 
-      const img = imgContainerRef.current?.querySelector('img');
-      if (img) {
+      const imageElement = imageContainerRef.current?.querySelector('img');
+      if (imageElement) {
         gsap.fromTo(
-          img,
+          imageElement,
           { scale: 1.12, opacity: 0 },
           {
             scale: 1,
@@ -54,7 +67,7 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
             duration: 1.5,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: imgContainerRef.current,
+              trigger: imageContainerRef.current,
               start: 'top 85%',
               toggleActions: 'play none none none',
             },
@@ -62,8 +75,8 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
         );
       }
 
-      if (imgContainerRef.current) {
-        gsap.to(imgContainerRef.current, {
+      if (imageContainerRef.current) {
+        gsap.to(imageContainerRef.current, {
           y: -22,
           ease: 'none',
           scrollTrigger: {
@@ -76,7 +89,7 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
       }
     }, rowRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
@@ -87,19 +100,21 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
       }`}
     >
       <div
-        ref={imgContainerRef}
+        ref={imageContainerRef}
         className={`overflow-hidden rounded-[4px] ${reversed ? 'md:[direction:ltr]' : ''}`}
       >
         <img
           src={image}
           alt={title}
           className="h-[400px] w-full object-cover md:h-[500px]"
+          decoding="async"
+          loading="lazy"
         />
       </div>
 
       <div
         ref={textRef}
-        className={`flex flex-col ${reversed ? 'md:[direction:ltr] md:items-end md:text-right' : ''}`}
+        className={`flex flex-col ${reversed ? 'md:items-end md:text-right md:[direction:ltr]' : ''}`}
       >
         <div className="stagger-item mb-8 w-fit">
           <span className="mb-3 block h-px w-32 bg-[#d9b588]" />
@@ -124,34 +139,23 @@ function ServiceRow({ label, title, description, image, reversed, cta }: Service
 
 export default function Services() {
   return (
-    <section className="bg-soft-beige px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32">
+    <section
+      id="services"
+      className="scroll-mt-28 bg-soft-beige px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32"
+    >
       <div className="mx-auto flex max-w-[1280px] flex-col gap-24 md:gap-32">
         <ServiceRow
           label="Livraison"
           title="Vos plats préférés, directement chez vous"
-          description="Commandez en quelques clics sur Deliveroo ou Uber Eats. Une cuisine authentique, préparée avec soin et livrée rapidement à votre porte."
-          image={publicAsset('images/delivery.jpg')}
+          description="Les plateformes arrivent bientôt. En attendant, nous préparons vos demandes de livraison et vos commandes directement par WhatsApp, avec le même soin."
+          image={deliveryImageSrc}
           reversed
           cta={
             <div className="flex flex-wrap gap-4">
+              <ComingSoonPill label="Deliveroo" />
+              <ComingSoonPill label="Uber Eats" />
               <a
-                href="https://deliveroo.fr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary"
-              >
-                Deliveroo
-              </a>
-              <a
-                href="https://ubereats.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary"
-              >
-                Uber Eats
-              </a>
-              <a
-                href="https://wa.me/330618487736"
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-outline-green"
@@ -165,9 +169,13 @@ export default function Services() {
         <ServiceRow
           label="Sur-mesure"
           title="Votre vision, notre expertise"
-          description="Mariages, anniversaires, séminaires d'entreprise — nous adaptons nos prestations à vos envies. Menus personnalisés, décoration, service attentif : nous nous occupons de tout pour que vous profitiez pleinement de votre moment."
-          image={publicAsset('images/surmesure.jpg')}
-          cta={<a href="#contact" className="btn-primary">Nous contacter</a>}
+          description="Mariages, anniversaires, séminaires d'entreprise : nous adaptons nos prestations à vos envies. Menus personnalisés, décoration, service attentif, nous nous occupons de tout pour que vous profitiez pleinement de votre moment."
+          image={surMesureImageSrc}
+          cta={
+            <a href="#contact" className="btn-primary">
+              Nous contacter
+            </a>
+          }
         />
       </div>
     </section>

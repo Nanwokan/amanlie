@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { prefersReducedMotion } from '@/lib/motion';
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,14 +11,13 @@ const contactDetails = [
   {
     icon: Phone,
     label: 'Téléphone',
-    value: '+33 6 18 48 77 36',
+    value: CONTACT_PHONE_DISPLAY,
     href: 'tel:+33618487736',
   },
   {
     icon: Mail,
     label: 'Email',
-    value: 'nolyndavalerie@outlook.com',
-    href: 'mailto:nolyndavalerie@outlook.com',
+    value: CONTACT_EMAIL,
   },
   {
     icon: MapPin,
@@ -26,19 +27,33 @@ const contactDetails = [
 ];
 
 interface ContactFieldProps {
+  autoComplete?: string;
   id: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   label: string;
-  type?: string;
+  maxLength?: number;
+  minLength?: number;
+  name: keyof ContactFormValues;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   required?: boolean;
   textarea?: boolean;
+  type?: string;
+  value: string;
 }
 
 function ContactField({
+  autoComplete,
   id,
+  inputMode,
   label,
-  type = 'text',
+  maxLength,
+  minLength,
+  name,
+  onChange,
   required = false,
   textarea = false,
+  type = 'text',
+  value,
 }: ContactFieldProps) {
   const labelText = `${label}${required ? ' *' : ''}`;
   const sharedClassName =
@@ -55,33 +70,70 @@ function ContactField({
 
       {textarea ? (
         <textarea
+          autoComplete={autoComplete}
           id={id}
+          maxLength={maxLength}
+          minLength={minLength}
+          name={name}
+          value={value}
           required={required}
           rows={4}
           className={`${sharedClassName} min-h-[128px] resize-none pt-0`}
+          onChange={onChange}
         />
       ) : (
         <input
+          autoComplete={autoComplete}
           id={id}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          minLength={minLength}
+          name={name}
           type={type}
+          value={value}
           required={required}
           className={sharedClassName}
+          onChange={onChange}
         />
       )}
     </div>
   );
 }
 
+interface ContactFormValues {
+  email: string;
+  message: string;
+  name: string;
+  phone: string;
+  subject: string;
+}
+
+const initialValues: ContactFormValues = {
+  email: '',
+  message: '',
+  name: '',
+  phone: '',
+  subject: '',
+};
+
+const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;
+
+type SubmissionState = 'error' | 'idle' | 'sending' | 'success';
+
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [formValues, setFormValues] = useState<ContactFormValues>(initialValues);
+  const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const introItems = sectionRef.current?.querySelectorAll('.contact-copy');
-      if (introItems && introItems.length > 0) {
+      if (introItems?.length) {
         gsap.fromTo(
           introItems,
           { y: 36, opacity: 0 },
@@ -100,8 +152,10 @@ export default function Contact() {
         );
       }
 
-      const formItems = sectionRef.current?.querySelectorAll('.contact-field, .contact-action');
-      if (formItems && formItems.length > 0) {
+      const formItems = sectionRef.current?.querySelectorAll(
+        '.contact-field, .contact-action'
+      );
+      if (formItems?.length) {
         gsap.fromTo(
           formItems,
           { y: 26, opacity: 0 },
@@ -121,19 +175,94 @@ export default function Contact() {
       }
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setFormValues((previousValues) => ({
+      ...previousValues,
+      [name]: value,
+    }));
+    if (submissionState !== 'idle') {
+      setSubmissionState('idle');
+      setFeedbackMessage('');
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+    const honeyValue = String(formData.get('_honey') ?? '').trim();
+
+    if (honeyValue) {
+      setFormValues(initialValues);
+      formElement.reset();
+      setSubmissionState('success');
+      setFeedbackMessage(
+        'Votre message a bien été envoyé. Nous revenons vers vous très rapidement.'
+      );
+      return;
+    }
+
+    setSubmissionState('sending');
+    setFeedbackMessage('');
+
+    try {
+      const response = await fetch(FORMSUBMIT_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formValues.name,
+          email: formValues.email,
+          phone: formValues.phone,
+          subject: formValues.subject,
+          message: formValues.message,
+          _subject: formValues.subject.trim()
+            ? `[${SITE_NAME}] ${formValues.subject.trim()}`
+            : `[${SITE_NAME}] Nouveau message via le site`,
+          _replyto: formValues.email,
+          _template: 'table',
+          _captcha: 'false',
+          _honey: honeyValue,
+        }),
+      });
+
+      const result = (await response.json().catch(() => null)) as
+        | { message?: string; success?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Échec de l’envoi du message.');
+      }
+
+      setFormValues(initialValues);
+      setSubmissionState('success');
+      setFeedbackMessage(
+        'Votre message a bien été envoyé. Nous revenons vers vous très rapidement.'
+      );
+    } catch (error) {
+      setSubmissionState('error');
+      setFeedbackMessage(
+        error instanceof Error
+          ? error.message
+          : 'Une erreur est survenue pendant l’envoi. Merci de réessayer.'
+      );
+    }
   };
 
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="bg-soft-beige px-6 py-24 md:px-10 md:py-28 lg:px-16 lg:py-24 xl:px-20"
+      className="scroll-mt-28 bg-soft-beige px-6 py-24 md:px-10 md:py-28 lg:px-16 lg:py-24 xl:px-20"
     >
       <div className="mx-auto grid max-w-[1360px] grid-cols-1 items-start gap-14 xl:grid-cols-[minmax(340px,0.68fr)_minmax(620px,1.04fr)] xl:gap-20">
         <div className="flex flex-col pt-1">
@@ -149,7 +278,8 @@ export default function Contact() {
           </h2>
 
           <p className="contact-copy mt-9 max-w-[33rem] font-body text-[15px] leading-[1.72] text-charcoal/78 md:text-[16px]">
-            Écrivez-nous quelques lignes, nous revenons vers vous dans la journée.
+            Écrivez-nous quelques lignes, votre message part directement dans notre
+            boîte de réception sans ouvrir votre messagerie.
           </p>
 
           <div className="mt-12 flex flex-col gap-8">
@@ -191,32 +321,102 @@ export default function Contact() {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 gap-y-7 md:grid-cols-2 md:gap-x-8"
           >
-            <ContactField id="contact-name" label="Nom" required />
-            <ContactField id="contact-email" label="Email" type="email" required />
-            <ContactField id="contact-phone" label="Téléphone" type="tel" />
-            <ContactField id="contact-subject" label="Sujet" />
+            <ContactField
+              autoComplete="name"
+              id="contact-name"
+              label="Nom"
+              maxLength={80}
+              minLength={2}
+              name="name"
+              onChange={handleChange}
+              required
+              value={formValues.name}
+            />
+            <ContactField
+              autoComplete="email"
+              id="contact-email"
+              inputMode="email"
+              label="Email"
+              maxLength={120}
+              name="email"
+              onChange={handleChange}
+              required
+              type="email"
+              value={formValues.email}
+            />
+            <ContactField
+              autoComplete="tel"
+              id="contact-phone"
+              inputMode="tel"
+              label="Téléphone"
+              maxLength={30}
+              name="phone"
+              onChange={handleChange}
+              type="tel"
+              value={formValues.phone}
+            />
+            <ContactField
+              autoComplete="off"
+              id="contact-subject"
+              label="Sujet"
+              maxLength={120}
+              name="subject"
+              onChange={handleChange}
+              value={formValues.subject}
+            />
 
             <div className="md:col-span-2">
-              <ContactField id="contact-message" label="Message" required textarea />
+              <ContactField
+                autoComplete="off"
+                id="contact-message"
+                label="Message"
+                maxLength={2000}
+                minLength={10}
+                name="message"
+                onChange={handleChange}
+                required
+                textarea
+                value={formValues.message}
+              />
             </div>
 
-            <div className="contact-action md:col-span-2">
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor="contact-website">Site web</label>
+              <input
+                id="contact-website"
+                name="_honey"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
+              />
+            </div>
+
+            <div className="contact-action flex flex-col items-center md:col-span-2">
               <button
                 type="submit"
-                className="inline-flex h-[54px] items-center gap-4 bg-bordeaux px-10 font-body text-[15px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-300 hover:bg-deep-burgundy"
+                aria-busy={submissionState === 'sending'}
+                disabled={submissionState === 'sending'}
+                className="inline-flex h-[54px] items-center gap-4 bg-bordeaux px-10 font-body text-[15px] font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-300 hover:bg-deep-burgundy disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Envoyer
+                {submissionState === 'sending' ? 'Envoi en cours…' : 'Envoyer'}
                 <Send className="h-[18px] w-[18px]" strokeWidth={1.9} />
               </button>
 
               <p className="mt-5 max-w-[38rem] font-body text-[14px] leading-[1.65] text-charcoal/72">
-                En envoyant ce message, vous acceptez d&apos;être recontacté(e) par
-                AMANLIÈ.
+                En envoyant ce message, vous acceptez d&apos;être recontacté(e) par{' '}
+                {SITE_NAME}.
               </p>
 
-              {submitted ? (
-                <p className="mt-3 font-body text-[14px] text-bordeaux">
-                  Merci, votre message a bien été pris en compte.
+              {feedbackMessage ? (
+                <p
+                  className={`mt-3 font-body text-[14px] ${
+                    submissionState === 'error' ? 'text-[#a13722]' : 'text-bordeaux'
+                  }`}
+                  aria-live="polite"
+                  role={submissionState === 'error' ? 'alert' : 'status'}
+                >
+                  {feedbackMessage}
                 </p>
               ) : null}
             </div>

@@ -7,18 +7,19 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react';
+import { prefersReducedMotion } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
 type MenuCategory = 'plats' | 'desserts' | 'boissons';
 
 interface MenuItem {
+  description: string;
   name: string;
   price: string;
-  description: string;
 }
 
-const menuTabs: { key: MenuCategory; label: string; icon: LucideIcon }[] = [
+const menuTabs: { icon: LucideIcon; key: MenuCategory; label: string }[] = [
   { key: 'plats', label: 'Plats chauds', icon: UtensilsCrossed },
   { key: 'desserts', label: 'Desserts', icon: Dessert },
   { key: 'boissons', label: 'Boissons', icon: CupSoda },
@@ -28,37 +29,37 @@ const menuByCategory: Record<MenuCategory, MenuItem[]> = {
   plats: [
     {
       name: 'Thiéboudienne',
-      price: '16€',
+      price: '16 €',
       description:
         'Riz au poisson, légumes mijotés, sauce tomate et tamarin, inspiré des grandes tables sénégalaises.',
     },
     {
       name: 'Jollof Rice & Poulet braisé',
-      price: '15€',
+      price: '15 €',
       description:
         "Riz tomate-épices, poulet mariné grillé au feu de bois et notes fumées d'Afrique de l'Ouest.",
     },
     {
       name: 'Attiéké & Poisson grillé',
-      price: '17€',
+      price: '17 €',
       description:
-        "Semoule de manioc fermentée, poisson entier mariné, piment maison et fraîcheur ivoirienne.",
+        'Semoule de manioc fermentée, poisson entier mariné, piment maison et fraîcheur ivoirienne.',
     },
     {
       name: 'Mafé Bœuf',
-      price: '16€',
+      price: '16 €',
       description:
         "Ragoût onctueux de bœuf à la pâte d'arachide, légumes racines et riz basmati parfumé.",
     },
     {
       name: 'Yassa Poulet',
-      price: '15€',
+      price: '15 €',
       description:
         'Poulet mariné citron-oignons confits, olives, sauce vive et riz blanc moelleux.',
     },
     {
       name: 'Alloco du chef',
-      price: '9€',
+      price: '9 €',
       description:
         'Bananes plantains caramélisées, sauce tomate épicée et œuf brouillé en option.',
     },
@@ -66,51 +67,51 @@ const menuByCategory: Record<MenuCategory, MenuItem[]> = {
   desserts: [
     {
       name: 'Nems banane-chocolat',
-      price: '7€',
+      price: '7 €',
       description:
         'Croustillant minute, banane fondante, chocolat noir et pointe de sucre vanillé.',
     },
     {
       name: 'Perles de coco maison',
-      price: '6€',
+      price: '6 €',
       description:
         'Bouchées moelleuses à la noix de coco, cœur doux et finition légèrement toastée.',
     },
     {
       name: 'Ananas rôti au gingembre',
-      price: '8€',
+      price: '8 €',
       description:
         'Ananas caramélisé, sirop gingembre-citron vert et éclats croquants.',
     },
     {
       name: 'Beignets sucrés du marché',
-      price: '6€',
+      price: '6 €',
       description:
-        'Petits beignets tièdes servis avec sucre fin et parfum subtil de fleur d’oranger.',
+        "Petits beignets tièdes servis avec sucre fin et parfum subtil de fleur d'oranger.",
     },
   ],
   boissons: [
     {
       name: 'Bissap glacé',
-      price: '5€',
+      price: '5 €',
       description:
-        'Infusion d’hibiscus, menthe fraîche et agrumes, servie bien froide.',
+        "Infusion d'hibiscus, menthe fraîche et agrumes, servie bien froide.",
     },
     {
       name: 'Gingembre maison',
-      price: '5€',
+      price: '5 €',
       description:
-        'Boisson fraîche au gingembre pressé, citron et juste ce qu’il faut de sucre.',
+        "Boisson fraîche au gingembre pressé, citron et juste ce qu'il faut de sucre.",
     },
     {
       name: 'Jus de bouye',
-      price: '6€',
+      price: '6 €',
       description:
         'Texture veloutée et saveur fruitée du baobab, signature douce et réconfortante.',
     },
     {
       name: 'Bulles du moment',
-      price: '7€',
+      price: '7 €',
       description:
         'Sélection pétillante maison selon la saison, légère et festive.',
     },
@@ -124,11 +125,13 @@ export default function Dishes() {
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('plats');
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const introItems = introRef.current?.querySelectorAll('.menu-intro-item');
-      if (introItems && introItems.length > 0) {
+      if (introItems?.length) {
         gsap.fromTo(
           introItems,
           { y: 40, opacity: 0 },
@@ -148,7 +151,7 @@ export default function Dishes() {
       }
 
       const shellItems = sectionRef.current?.querySelectorAll('.menu-shell-item');
-      if (shellItems && shellItems.length > 0) {
+      if (shellItems?.length) {
         gsap.fromTo(
           shellItems,
           { y: 18, opacity: 0 },
@@ -168,15 +171,19 @@ export default function Dishes() {
       }
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   useEffect(() => {
-    if (!menuRef.current) return;
+    if (!menuRef.current || prefersReducedMotion()) {
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
+    const context = gsap.context(() => {
       const dishItems = menuRef.current?.querySelectorAll('.dish-item');
-      if (!dishItems || dishItems.length === 0) return;
+      if (!dishItems?.length) {
+        return;
+      }
 
       gsap.fromTo(
         dishItems,
@@ -191,7 +198,7 @@ export default function Dishes() {
       );
     }, menuRef);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, [activeCategory]);
 
   const activeItems = menuByCategory[activeCategory];
@@ -200,7 +207,7 @@ export default function Dishes() {
     <section
       id="menu"
       ref={sectionRef}
-      className="bg-warm-cream px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32"
+      className="scroll-mt-28 bg-warm-cream px-6 py-24 md:px-10 md:py-28 lg:px-20 lg:py-32"
     >
       <div className="mx-auto max-w-[1280px]">
         <div
@@ -241,9 +248,7 @@ export default function Dishes() {
                   aria-pressed={isActive}
                   onClick={() => setActiveCategory(tab.key)}
                   className={`relative flex items-center gap-2 pb-5 font-body text-[11px] uppercase tracking-[0.29em] transition-colors duration-300 ${
-                    isActive
-                      ? 'text-bordeaux'
-                      : 'text-charcoal/65 hover:text-bordeaux'
+                    isActive ? 'text-bordeaux' : 'text-charcoal/65 hover:text-bordeaux'
                   }`}
                 >
                   <Icon size={13} strokeWidth={1.8} />
