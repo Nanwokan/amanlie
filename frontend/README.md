@@ -26,7 +26,8 @@ Le site est statique et pensé pour GitHub Pages.
 
 - Le formulaire envoie directement le message à `nolyndavalerie@outlook.com` sans ouvrir la messagerie du visiteur.
 - WhatsApp reste un canal rapide complémentaire pour les demandes directes.
-- Deliveroo, Uber Eats, Instagram et Facebook sont affichés comme "bientôt disponible" tant que les comptes n'existent pas encore.
+- Instagram est accessible via le compte `@amanlie_e`.
+- Deliveroo, Uber Eats et Facebook restent affichés comme "bientôt disponible" tant que les comptes n'existent pas encore.
 
 ## Déploiement
 

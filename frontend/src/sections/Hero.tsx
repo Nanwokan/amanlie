@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import ComingSoonPill from '@/components/ComingSoonPill';
-import heroBackgroundSrc from '@/assets/images/hero-bg.jpg';
+import heroBackgroundSrc from '@/assets/images/hero-bg.png';
 import logoSrc from '@/assets/images/logo.png';
 import { getScrollBehavior, prefersReducedMotion } from '@/lib/motion';
 import { SITE_NAME, WHATSAPP_URL } from '@/lib/utils';
@@ -75,7 +75,7 @@ export default function Hero() {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroBackgroundSrc})` }}
       />
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative z-10 flex flex-col items-center px-6 pt-20 text-center">
         <img

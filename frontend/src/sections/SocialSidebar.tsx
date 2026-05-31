@@ -1,6 +1,6 @@
+import { Instagram, Mail } from 'lucide-react';
 import { getScrollBehavior } from '@/lib/motion';
-import { Mail } from 'lucide-react';
-import { WHATSAPP_URL } from '@/lib/utils';
+import { INSTAGRAM_URL, WHATSAPP_URL } from '@/lib/utils';
 
 export default function SocialSidebar() {
   const handleContactClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -13,6 +13,15 @@ export default function SocialSidebar() {
 
   return (
     <div className="fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-center gap-5 px-3 py-5 lg:flex">
+      <a
+        href={INSTAGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-bordeaux transition-all duration-300 hover:scale-[1.15] hover:text-deep-burgundy"
+        aria-label="Instagram AMANLIÈ"
+      >
+        <Instagram size={20} />
+      </a>
       <a
         href={WHATSAPP_URL}
         target="_blank"

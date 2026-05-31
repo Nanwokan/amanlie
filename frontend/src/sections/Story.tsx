@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import storyImageSrc from '@/assets/images/story.jpg';
+import storyImageSrc from '@/assets/images/story.png';
 import { prefersReducedMotion } from '@/lib/motion';
 import { SITE_NAME } from '@/lib/utils';
 
@@ -87,7 +87,7 @@ export default function Story() {
           <img
             src={storyImageSrc}
             alt={`L'équipe ${SITE_NAME}`}
-            className="aspect-square w-full object-cover"
+            className=" w-full object-cover"
             decoding="async"
             loading="lazy"
           />

@@ -4,6 +4,7 @@ import { getScrollBehavior } from '@/lib/motion';
 import {
   CONTACT_EMAIL,
   CONTACT_PHONE_DISPLAY,
+  INSTAGRAM_URL,
   SITE_NAME,
   WHATSAPP_URL,
 } from '@/lib/utils';
@@ -70,7 +71,15 @@ export default function Footer() {
               >
                 WhatsApp
               </a>
-              <ComingSoonPill label="Instagram" />
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-[2px] border border-bordeaux px-4 py-3 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-bordeaux transition-colors duration-300 hover:bg-bordeaux hover:text-warm-cream"
+                aria-label="Instagram"
+              >
+                Instagram
+              </a>
               <ComingSoonPill label="Facebook" />
             </div>
           </div>
@@ -98,7 +107,10 @@ export default function Footer() {
         <div className="mb-8 h-px w-full bg-[#e6d7c5]" />
 
         <p className="text-center font-body text-[11px] text-charcoal/58">
-          © {currentYear} {SITE_NAME}. Tous droits réservés.
+          © {currentYear} {SITE_NAME}. Tous droits réservés. 
+        </p>
+        <p className="text-center font-body text-[11px] text-charcoal/58">
+          Site conçu et développé par Nanwokan Ouattara.
         </p>
       </div>
     </footer>

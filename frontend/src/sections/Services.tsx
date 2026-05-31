@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import deliveryImageSrc from '@/assets/images/delivery.jpg';
-import surMesureImageSrc from '@/assets/images/surmesure.jpg';
+import deliveryImageSrc from '@/assets/images/delivery.png';
 import ComingSoonPill from '@/components/ComingSoonPill';
 import { prefersReducedMotion } from '@/lib/motion';
 import { WHATSAPP_URL } from '@/lib/utils';
@@ -163,18 +162,6 @@ export default function Services() {
                 WhatsApp
               </a>
             </div>
-          }
-        />
-
-        <ServiceRow
-          label="Sur-mesure"
-          title="Votre vision, notre expertise"
-          description="Mariages, anniversaires, séminaires d'entreprise : nous adaptons nos prestations à vos envies. Menus personnalisés, décoration, service attentif, nous nous occupons de tout pour que vous profitiez pleinement de votre moment."
-          image={surMesureImageSrc}
-          cta={
-            <a href="#contact" className="btn-primary">
-              Nous contacter
-            </a>
           }
         />
       </div>

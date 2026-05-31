@@ -1,14 +1,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import socialImage1 from '@/assets/images/social-1.jpg';
-import socialImage2 from '@/assets/images/social-2.jpg';
-import socialImage3 from '@/assets/images/social-3.jpg';
-import socialImage4 from '@/assets/images/social-4.jpg';
-import socialImage5 from '@/assets/images/social-5.jpg';
-import ComingSoonPill from '@/components/ComingSoonPill';
+import socialImage1 from '@/assets/images/social-1.png';
+import socialImage2 from '@/assets/images/social-2.png';
+import socialImage3 from '@/assets/images/social-3.png';
+import socialImage4 from '@/assets/images/social-4.png';
+import socialImage5 from '@/assets/images/social-5.png';
 import { prefersReducedMotion } from '@/lib/motion';
-import { SITE_NAME } from '@/lib/utils';
+import { INSTAGRAM_URL, SITE_NAME } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -69,13 +68,27 @@ export default function SocialFeed() {
           L&apos;univers {SITE_NAME}
         </p>
         <div className="mt-5 flex justify-center">
-          <ComingSoonPill label="Instagram" />
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-[2px] border border-bordeaux px-5 py-3 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-bordeaux transition-colors duration-300 hover:bg-bordeaux hover:text-warm-cream"
+          >
+            @amanlie_e
+          </a>
         </div>
       </div>
 
       <div ref={gridRef} className="grid grid-cols-2 gap-0 md:grid-cols-5">
         {socialImages.map((src, index) => (
-          <figure key={src} className="social-item group relative aspect-square overflow-hidden">
+          <a
+            key={src}
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-item group relative aspect-square overflow-hidden"
+            aria-label={`Voir ${SITE_NAME} sur Instagram`}
+          >
             <img
               src={src}
               alt={`Univers ${SITE_NAME} ${index + 1}`}
@@ -83,10 +96,10 @@ export default function SocialFeed() {
               decoding="async"
               loading="lazy"
             />
-            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-4 py-3 font-body text-[11px] uppercase tracking-[0.22em] text-white/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              Instagram bientôt
-            </figcaption>
-          </figure>
+            <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-4 py-3 font-body text-[11px] uppercase tracking-[0.22em] text-white/90 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              @amanlie_e
+            </span>
+          </a>
         ))}
       </div>
     </section>

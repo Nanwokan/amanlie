@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
+  ChevronDown,
   CupSoda,
   Dessert,
+  Sandwich,
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react';
@@ -11,109 +13,165 @@ import { prefersReducedMotion } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
-type MenuCategory = 'plats' | 'desserts' | 'boissons';
+type MenuCategory = 'plats' | 'accompagnements' | 'boissons' | 'desserts';
+
+const INITIAL_VISIBLE_ITEMS = 6;
 
 interface MenuItem {
-  description: string;
+  description?: string;
+  meta?: string;
   name: string;
-  price: string;
+  price?: string;
 }
 
 const menuTabs: { icon: LucideIcon; key: MenuCategory; label: string }[] = [
   { key: 'plats', label: 'Plats chauds', icon: UtensilsCrossed },
-  { key: 'desserts', label: 'Desserts', icon: Dessert },
+  {
+    key: 'accompagnements',
+    label: 'Accompagnement & snacks',
+    icon: Sandwich,
+  },
   { key: 'boissons', label: 'Boissons', icon: CupSoda },
+  { key: 'desserts', label: 'Desserts', icon: Dessert },
 ];
 
 const menuByCategory: Record<MenuCategory, MenuItem[]> = {
   plats: [
     {
-      name: 'Thiéboudienne',
-      price: '16 €',
+      name: 'Sauce Djoumblé',
+      price: '15,00 €',
       description:
-        'Riz au poisson, légumes mijotés, sauce tomate et tamarin, inspiré des grandes tables sénégalaises.',
+        'Sauce ivoirienne à base de poudre de gombo sec, servie avec accompagnement au choix.',
     },
     {
-      name: 'Jollof Rice & Poulet braisé',
-      price: '15 €',
+      name: 'Sauce Arachide',
+      price: '16,00 €',
       description:
-        "Riz tomate-épices, poulet mariné grillé au feu de bois et notes fumées d'Afrique de l'Ouest.",
+        "Sauce onctueuse à la pâte d'arachide, généreuse et mijotée à feu doux.",
     },
     {
-      name: 'Attiéké & Poisson grillé',
-      price: '17 €',
+      name: 'Sauce Graine',
+      price: '16,00 €',
       description:
-        'Semoule de manioc fermentée, poisson entier mariné, piment maison et fraîcheur ivoirienne.',
+        'Sauce ivoirienne à la pulpe de noix de palme, aux saveurs riches et profondes.',
     },
     {
-      name: 'Mafé Bœuf',
-      price: '16 €',
+      name: 'Sauce Claire',
+      price: '15,00 €',
       description:
-        "Ragoût onctueux de bœuf à la pâte d'arachide, légumes racines et riz basmati parfumé.",
+        "Sauce à base de tomates, d'oignons et d'akpi, épicée et parfumée.",
     },
     {
-      name: 'Yassa Poulet',
-      price: '15 €',
+      name: 'Sauce Épinards',
+      price: '15,00 €',
       description:
-        'Poulet mariné citron-oignons confits, olives, sauce vive et riz blanc moelleux.',
+        "Épinards mijotés aux saveurs africaines, relevés d'un assaisonnement maison.",
     },
     {
-      name: 'Alloco du chef',
-      price: '9 €',
+      name: 'Sauce Pistache',
+      price: '16,00 €',
       description:
-        'Bananes plantains caramélisées, sauce tomate épicée et œuf brouillé en option.',
+        'Sauce onctueuse aux graines de pistache, mijotée avec soin aux épices douces.',
+    },
+    {
+      name: 'Travers de porc braisés',
+      price: '17,00 €',
+      description:
+        'Travers de porc marinés puis braisés lentement, servis avec accompagnement au choix.',
+    },
+    {
+      name: 'Tilapia grillé',
+      price: '18,00 €',
+      description:
+        "Tilapia entier grillé aux épices, accompagné d'un accompagnement au choix.",
+    },
+    {
+      name: 'Poulet braisé',
+      price: '14,00 €',
+      description:
+        'Poulet mariné puis braisé, servi avec accompagnement au choix.',
+    },
+    {
+      name: 'Brochettes de viande (au choix)',
+      price: '14,00 €',
+      description:
+        'Brochettes de viande marinées, servies avec accompagnement au choix.',
     },
   ],
-  desserts: [
+  accompagnements: [
     {
-      name: 'Nems banane-chocolat',
-      price: '7 €',
-      description:
-        'Croustillant minute, banane fondante, chocolat noir et pointe de sucre vanillé.',
+      name: 'Alloco',
+      price: '3,50 €',
     },
     {
-      name: 'Perles de coco maison',
-      price: '6 €',
-      description:
-        'Bouchées moelleuses à la noix de coco, cœur doux et finition légèrement toastée.',
+      name: 'Abolo (6 pièces)',
+      price: '2,50 €',
     },
     {
-      name: 'Ananas rôti au gingembre',
-      price: '8 €',
-      description:
-        'Ananas caramélisé, sirop gingembre-citron vert et éclats croquants.',
+      name: 'Placali (150 g)',
+      price: '3,00 €',
     },
     {
-      name: 'Beignets sucrés du marché',
-      price: '6 €',
-      description:
-        "Petits beignets tièdes servis avec sucre fin et parfum subtil de fleur d'oranger.",
+      name: 'Pomme de terre sautée',
+      price: '3,50 €',
+    },
+    {
+      name: 'Foufou (2 boules)',
+      price: '4,00 €',
+    },
+    {
+      name: 'Riz blanc (150 g)',
+      price: '3,00 €',
+    },
+    {
+      name: 'Riz sauté (150 g)',
+      price: '4,00 €',
+    },
+    {
+      name: 'Wings panés (5 pièces)',
+      price: '5,50 €',
     },
   ],
   boissons: [
     {
-      name: 'Bissap glacé',
-      price: '5 €',
+      name: 'Jus de Bissap',
+      meta: '25 cl',
+      price: '2,50 €',
       description:
-        "Infusion d'hibiscus, menthe fraîche et agrumes, servie bien froide.",
+        'Infusion d’hibiscus aux notes florales et mentholées, servie fraîche.',
     },
     {
-      name: 'Gingembre maison',
-      price: '5 €',
+      name: 'Jus de Tamarin',
+      meta: '25 cl',
+      price: '2,50 €',
       description:
-        "Boisson fraîche au gingembre pressé, citron et juste ce qu'il faut de sucre.",
+        'Boisson traditionnelle au tamarin, légèrement acidulée et rafraîchissante.',
     },
     {
-      name: 'Jus de bouye',
-      price: '6 €',
+      name: 'Jus de Passion',
+      meta: '25 cl',
+      price: '3,50 €',
       description:
-        'Texture veloutée et saveur fruitée du baobab, signature douce et réconfortante.',
+        'Jus de fruit de la passion aux saveurs exotiques et délicatement acidulées.',
     },
     {
-      name: 'Bulles du moment',
-      price: '7 €',
+      name: 'Citronnade maison',
+      meta: '25 cl',
+      price: '2,00 €',
       description:
-        'Sélection pétillante maison selon la saison, légère et festive.',
+        'Boisson citronnée fraîchement préparée, légère et désaltérante.',
+    },
+    {
+      name: 'Jus de Baobab',
+      meta: '25 cl',
+      price: '3,00 €',
+      description:
+        'Boisson onctueuse au fruit de baobab, aux saveurs douces et gourmandes.',
+    },
+  ],
+  desserts: [
+    {
+      name: 'Tiramisu',
     },
   ],
 };
@@ -123,6 +181,9 @@ export default function Dishes() {
   const introRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('plats');
+  const [expandedCategories, setExpandedCategories] = useState<
+    Partial<Record<MenuCategory, boolean>>
+  >({});
 
   useEffect(() => {
     if (!sectionRef.current || prefersReducedMotion()) {
@@ -199,9 +260,21 @@ export default function Dishes() {
     }, menuRef);
 
     return () => context.revert();
-  }, [activeCategory]);
+  }, [activeCategory, expandedCategories]);
 
   const activeItems = menuByCategory[activeCategory];
+  const isExpanded = expandedCategories[activeCategory] ?? false;
+  const shouldShowToggle = activeItems.length > INITIAL_VISIBLE_ITEMS;
+  const visibleItems = shouldShowToggle && !isExpanded
+    ? activeItems.slice(0, INITIAL_VISIBLE_ITEMS)
+    : activeItems;
+
+  const handleToggleExpanded = () => {
+    setExpandedCategories((previousState) => ({
+      ...previousState,
+      [activeCategory]: !previousState[activeCategory],
+    }));
+  };
 
   return (
     <section
@@ -223,15 +296,14 @@ export default function Dishes() {
             </div>
 
             <h2 className="max-w-[660px] font-display text-[clamp(2rem,3.2vw,3rem)] font-normal leading-[1.08] tracking-[-0.02em] text-bordeaux">
-              Du feu, du <span className="italic">sucre</span>, et des bulles
-              <span className="block">maison.</span>
+              Les grands classiques
+              <span className="block italic">de la maison.</span>
             </h2>
           </div>
 
           <p className="menu-intro-item max-w-[480px] pt-1 font-body text-[14px] leading-[1.7] text-charcoal/78 xl:ml-auto xl:pt-24">
-            Une carte courte, vibrante, que nous renouvelons au fil des saisons et des
-            envies. Pour les groupes et événements, des menus sur mesure sont
-            disponibles sur demande.
+            Sauces traditionnelles, braisés, accompagnements maison, jus frais et
+            douceurs: voici la vraie carte servie chez AMANLIÈ.
           </p>
         </div>
 
@@ -268,27 +340,61 @@ export default function Dishes() {
           ref={menuRef}
           className="menu-shell-item mt-10 grid grid-cols-1 gap-x-16 xl:mt-14 xl:grid-cols-2"
         >
-          {activeItems.map((item) => (
+          {visibleItems.map((item) => (
             <article
               key={`${activeCategory}-${item.name}`}
               className="dish-item border-b border-[#ddd0be] py-8 first:pt-10 xl:py-10"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <h3 className="shrink-0 font-display text-[20px] font-normal leading-[1.08] text-bordeaux md:text-[23px]">
                   {item.name}
                 </h3>
-                <span className="mt-1 h-px flex-1 border-b border-dotted border-[#ddcdb7]" />
-                <span className="shrink-0 font-display text-[17px] font-normal leading-none text-bordeaux md:text-[19px]">
-                  {item.price}
-                </span>
+
+                {item.meta || item.price ? (
+                  <span className="mt-1 h-px flex-1 border-b border-dotted border-[#ddcdb7]" />
+                ) : null}
+
+                {item.meta ? (
+                  <span className="shrink-0 font-body text-[11px] uppercase tracking-[0.22em] text-charcoal/58 md:text-[12px]">
+                    {item.meta}
+                  </span>
+                ) : null}
+
+                {item.price ? (
+                  <span className="shrink-0 font-display text-[17px] font-normal leading-none text-bordeaux md:text-[19px]">
+                    {item.price}
+                  </span>
+                ) : null}
               </div>
 
-              <p className="mt-4 max-w-[42rem] font-body text-[14px] leading-[1.7] text-charcoal/76 md:pr-6 md:text-[15px]">
-                {item.description}
-              </p>
+              {item.description ? (
+                <p className="mt-4 max-w-[42rem] font-body text-[14px] leading-[1.7] text-charcoal/76 md:pr-6 md:text-[15px]">
+                  {item.description}
+                </p>
+              ) : null}
             </article>
           ))}
         </div>
+
+        {shouldShowToggle ? (
+          <div className="menu-shell-item mt-10 flex justify-center xl:mt-12">
+            <button
+              type="button"
+              onClick={handleToggleExpanded}
+              aria-expanded={isExpanded}
+              className="inline-flex items-center gap-3 border border-[#d8cbb9] bg-[#f8f3ea] px-6 py-3 font-body text-[11px] font-semibold uppercase tracking-[0.24em] text-bordeaux transition-colors duration-300 hover:bg-[#f1e7d8]"
+            >
+              {isExpanded ? 'Réduire la liste' : 'Voir plus'}
+              <ChevronDown
+                size={16}
+                strokeWidth={2}
+                className={`transition-transform duration-300 ${
+                  isExpanded ? 'rotate-180' : 'rotate-0'
+                }`}
+              />
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );
